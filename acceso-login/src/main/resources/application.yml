@@ -1,0 +1,35 @@
+spring:
+  application:
+    name: login
+  datasource:
+    #url: ${db.url}
+    #username: ${db.username}
+    #password: ${db.password}
+    #driver-class-name: org.postgresql.Driver
+    url: jdbc:oracle:thin:@logii-oracle.czj90e0hs7ck.us-east-1.rds.amazonaws.com:1521/logii
+    username: logii_oracle
+    password: 12345678
+    driver-class-name: oracle.jdbc.driver.OracleDriver
+    hikari:
+      minimum-idle: 1
+      maximum-pool-size: 5
+      idle-timeout: 10000
+      poolName: poolLogin
+  jpa:
+    generate-ddl: true
+    show-sql: true
+#    hibernate:
+#      dialect: org.hibernate.dialect.PostgreSQLDialect
+#      ddl-auto: create-drop
+
+management:
+  endpoints:
+    web:
+      base-path: /
+      exposure:
+        include: gateway,health,info
+
+
+#Port - If 0 get random port
+server:
+  port: 8082
