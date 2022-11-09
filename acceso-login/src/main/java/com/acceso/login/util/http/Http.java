@@ -101,7 +101,7 @@ public class Http implements ClienteHttpService {
 
         Integer timeoutHttp = 1;
 
-        String gp = "80000";
+        String gp = null;
 
         if( gp != null ) {
             timeoutHttp = Integer.parseInt(gp );
