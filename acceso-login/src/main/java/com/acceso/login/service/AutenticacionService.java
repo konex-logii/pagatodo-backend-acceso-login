@@ -24,9 +24,6 @@ import com.acceso.login.util.http.GenericoHttp;
 @SuppressWarnings("unchecked")
 public class AutenticacionService {
 
-
-	
-
 	@Autowired
 	private GenericoHttp generic;
 
@@ -36,17 +33,19 @@ public class AutenticacionService {
 	 *
 	 * @param credenciales DTO que contiene los datos de las credenciales
 	 * @return DTO con los datos del response para la autenticacion en el sistema
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public AutenticacionResponseDTO iniciarSesion(AutenticacionRequestDTO credenciales) throws Exception {
+
+		AutenticacionResponseDTO aut = new AutenticacionResponseDTO();
 		if (credenciales != null && !Util.isNull(credenciales.getClaveIngreso())
 				&& !Util.isNull(credenciales.getUsuarioIngreso())) {
 
-			boolean obj= validarExisteUsuario(credenciales);
-			
+			boolean obj = validarExisteUsuario(credenciales);
+
 			// se hace el llamado a validarExisteUSuario() ValidarRol()
 			if (obj) {
-			
+				aut.setUsuario(null);
 				// se hace el llamado a validarZona() y ValidarPDV()
 				// se hace el llamado a validarHorario()
 				// se hace el llamado a validarPlanComision()
@@ -54,7 +53,7 @@ public class AutenticacionService {
 				// se hace el llamado a validarTipoUsuario()
 				// se hace el llamado a validarEmpresa usuario()
 			}
-
+			return aut;
 		}
 		throw new BusinessException(MessagesBussinesKey.KEY_AUTENTICACION_FALLIDA.value);
 	}
@@ -64,19 +63,19 @@ public class AutenticacionService {
 		ResponseEntity<?> response;
 
 		boolean body;
-		
+
 		URI uri;
 
-		String url = "http://localhost:8082/acceso-usuarios/validarExisteUsuario?claveIngreso={0}&usuarioIngreso={1}&idAplicacion={2}";
-		List<String> params= new ArrayList<String>();
+		String url = "http://localhost:8083/acceso-usuarios/validarExisteUsuario?claveIngreso={0}&usuarioIngreso={1}&idAplicacion={2}";
+		List<String> params = new ArrayList<String>();
 		params.add(credenciales.getClaveIngreso());
 		params.add(credenciales.getUsuarioIngreso());
 		params.add(credenciales.getIdAplicacion().toString());
 		String[] array = params.toArray(new String[2]);
-		
-		uri = Util.buildUri(url,array);
 
-		response = this.generic.getService(uri, boolean.class);
+		uri = Util.buildUri(url, array);
+
+		response = this.generic.getService(uri, Object.class);
 
 		body = (boolean) response.getBody();
 
