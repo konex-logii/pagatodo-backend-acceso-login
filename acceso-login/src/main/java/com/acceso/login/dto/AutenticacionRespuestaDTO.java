@@ -11,7 +11,7 @@ import lombok.Data;
  * sistema
  */
 @Data
-public class AutenticacionResponseDTO implements Serializable {
+public class AutenticacionRespuestaDTO implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	/** son los datos del usuario autenticado */
