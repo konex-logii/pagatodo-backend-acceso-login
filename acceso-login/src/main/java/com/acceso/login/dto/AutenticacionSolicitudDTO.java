@@ -2,14 +2,18 @@ package com.acceso.login.dto;
 
 import java.io.Serializable;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 /**
  * DTO para encapsular los datos que se envia desde el cliente
  * (angular, app movil) al momento de la autenticacion del sistema
  */
-@Data
-public class AutenticacionRequestDTO implements Serializable {
+@Getter
+@Setter
+@NoArgsConstructor
+public class AutenticacionSolicitudDTO implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	/** Es la clave de ingreso al sistema */

@@ -2,13 +2,17 @@ package com.acceso.login.dto;
 
 import java.io.Serializable;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 /**
  * Se utiliza para enviar un solo mensaje desde servidor al cliente
  */
-@Data
-public class MessageResponseDTO implements Serializable {
+@Getter
+@Setter
+@NoArgsConstructor
+public class MensajeRespuestaDTO implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	/**
@@ -21,7 +25,7 @@ public class MessageResponseDTO implements Serializable {
 	 */
 	private String mensaje;
 	
-	public MessageResponseDTO(String mensaje) {
+	public MensajeRespuestaDTO(String mensaje) {
 		this.mensaje = mensaje;
 	}
 }

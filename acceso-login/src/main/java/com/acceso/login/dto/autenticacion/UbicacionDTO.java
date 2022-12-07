@@ -1,13 +1,17 @@
 package com.acceso.login.dto.autenticacion;
 
-import lombok.Data;
-
 import java.io.Serializable;
+
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 /**
  * DTO para encapsular los datos de la ubicacion del usuario
  */
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
 public class UbicacionDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 

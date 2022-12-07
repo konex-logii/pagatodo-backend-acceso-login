@@ -2,12 +2,16 @@ package com.acceso.login.dto;
 
 import java.io.Serializable;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 /**
  * DTO que contiene los atributos de la papeleria rollos
  */
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
 public class PapeleriaRolloDTO implements Serializable {
 	private static final long serialVersionUID = 1L;
 

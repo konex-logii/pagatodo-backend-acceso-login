@@ -7,9 +7,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.acceso.login.dto.AutenticacionRequestDTO;
+import com.acceso.login.dto.AutenticacionSolicitudDTO;
 import com.acceso.login.service.AccesoLoginService;
-import com.acceso.login.util.BusinessException;
+import com.acceso.login.util.ExcepcionComercial;
 import com.acceso.login.util.Util;
 
 import io.swagger.annotations.ApiOperation;
@@ -42,11 +42,11 @@ public class AccesoLoginResource {
 			@ApiResponse(code = 400, message = "Se presentó una exception de negocio"),
 			@ApiResponse(code = 404, message = "Recurso no encontrado"),
 			@ApiResponse(code = 500, message = "Internal Server Error")})
-	public ResponseEntity<Object> iniciarSesion(@RequestBody AutenticacionRequestDTO credenciales) {
+	public ResponseEntity<Object> iniciarSesion(@RequestBody AutenticacionSolicitudDTO credenciales) {
 		try {
 			log.info("INFORMACION iniciarSesion: "+credenciales);
 			return Util.getResponseSuccessful(this.accesoLoginService.iniciarSesion(credenciales));
-		} catch (BusinessException e) {
+		} catch (ExcepcionComercial e) {
 			log.error("ERROR iniciarSesion: "+e.getMessage());
 			return Util.getResponseBadRequest(e.getMessage());
 		} catch (Exception e	) {

@@ -1,12 +1,10 @@
 package com.acceso.login.constants;
 
-import lombok.Data;
-
 /**
  * DTO para encapsular los datos que se envia desde el cliente
  * (angular, app movil) al momento de la autenticacion del sistema
  */
-@Data
+
 public class UrlMicrosSolicitud {
     /** Es la clave de ingreso al sistema */
     public static final String accesoUsuarios = "http://localhost:8083/acceso-usuarios/";
@@ -16,4 +14,5 @@ public class UrlMicrosSolicitud {
     public static final String administracionHorario = "http://localhost:8084/administracionHorario/";
     public static final String administracionPapeleria = "http://localhost:8190/administracionPapeleria/";
     public static final String adminOperacionComercial = "http://localhost:8082/operacion-comercial/";
+    public static final String menus = "http://localhost:8088/menu/";
 }

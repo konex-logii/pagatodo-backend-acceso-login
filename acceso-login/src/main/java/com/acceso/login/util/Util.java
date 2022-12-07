@@ -7,7 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import com.acceso.login.constants.Numero;
-import com.acceso.login.dto.MessageResponseDTO;
+import com.acceso.login.dto.MensajeRespuestaDTO;
 
 import lombok.experimental.UtilityClass;
 
@@ -25,14 +25,6 @@ public class Util {
 		return valor == null || valor.trim().length() == Numero.ZERO.valueI.intValue();
 	}
 
-	/**
-	 * Metodo que permite construir el attachment para la descarga de documentos
-	 */
-	public static String getAttachmentDocument(String name) {
-		StringBuilder attachment = new StringBuilder("attachment;filename=");
-		attachment.append(name);
-		return attachment.toString();
-	}
 
 	/**
 	 * Metodo que permite construir el response de respuesta exitoso
@@ -45,14 +37,14 @@ public class Util {
 	 * Metodo que permite construir el response de respuesta OK
 	 */
 	public static ResponseEntity<Object> getResponseOk() {
-		return ResponseEntity.status(HttpStatus.OK).body(new MessageResponseDTO(HttpStatus.OK.getReasonPhrase()));
+		return ResponseEntity.status(HttpStatus.OK).body(new MensajeRespuestaDTO(HttpStatus.OK.getReasonPhrase()));
 	}
 
 	/**
 	 * Metodo que permite construir el response de respuesta BAD REQUEST
 	 */
 	public static ResponseEntity<Object> getResponseBadRequest(String bussinesMessage) {
-		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MessageResponseDTO(bussinesMessage));
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MensajeRespuestaDTO(bussinesMessage));
 	}
 
 	/**
@@ -65,15 +57,9 @@ public class Util {
 		if (error == null || error.trim().length() == Numero.ZERO.valueI.intValue()) {
 			error = "Exception lanzada por NullPointerException.";
 		}
-		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new MessageResponseDTO(metodo + error));
+		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new MensajeRespuestaDTO(metodo + error));
 	}
 
-	/**
-	 * Metodo que permite obtener un valor de un array de objecto
-	 */
-	public static String getValue(Object[] data, Integer index) {
-		return data[index] != null ? data[index].toString() : null;
-	}
 	
 	 public static URI buildUri( String url, String... params ) {
 

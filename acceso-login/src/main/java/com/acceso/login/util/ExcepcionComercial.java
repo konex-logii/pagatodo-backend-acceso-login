@@ -3,7 +3,7 @@ package com.acceso.login.util;
 /**
  * Clase que identifica el tipo de exception de negocio
  */
-public class BusinessException extends Exception {
+public class ExcepcionComercial extends Exception {
 	private static final long serialVersionUID = 1L;
 
 	/**
@@ -11,7 +11,7 @@ public class BusinessException extends Exception {
 	 * 
 	 * @param msj, es el mensaje de la exception ocurrido
 	 */
-	public BusinessException(String msj) {
+	public ExcepcionComercial(String msj) {
 		super(msj);
 	}
 }

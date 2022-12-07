@@ -3,6 +3,7 @@ package com.acceso.login.service;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -10,16 +11,21 @@ import com.acceso.login.constants.*;
 import com.acceso.login.dto.*;
 import com.acceso.login.dto.autenticacion.UbicacionDTO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.acceso.login.dto.SelectItem;
-import com.acceso.login.util.BusinessException;
+import com.acceso.login.util.ExcepcionComercial;
 
 import com.acceso.login.util.Util;
 import com.acceso.login.http.GenericoHttp;
+
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.util.ObjectUtils;
+import org.springframework.web.client.HttpClientErrorException;
 
 /**
  * Service para que contiene los procesos de negocio para la autenticacion
@@ -39,7 +45,7 @@ public class AccesoLoginService {
 	 * @return DTO con los datos del response para la autenticacion en el sistema
 	 * @throws Exception
 	 */
-	public AutenticacionRespuestaDTO iniciarSesion(AutenticacionRequestDTO credenciales) throws Exception {
+	public AutenticacionRespuestaDTO iniciarSesion(AutenticacionSolicitudDTO credenciales) throws Exception {
 		AutenticacionRespuestaDTO aut = new AutenticacionRespuestaDTO();
 		if (credenciales != null && !Util.isNull(credenciales.getClaveIngreso()) && !Util.isNull(credenciales.getUsuarioIngreso())) {
 			Object obj = validarExisteUsuario(credenciales);
@@ -49,33 +55,28 @@ public class AccesoLoginService {
 				String codificado = (String) ((List<?>) obj).get(Numero.TRES.valueI);
 				AutenticacionRespuestaDTO response = obtenerAutenticacionRespuestaDTO(credenciales,obj,codificado);
 				if (response != null) return response;
-				throw new BusinessException(MessagesBussinesKey.KEY_AUTENTICACION_FALLIDA.value);
-				//aut.setUsuario(null);
-				// se hace el llamado a validarZona() y ValidarPDV()
-				// se hace el llamado a validarHorario()
-				// se hace el llamado a validarPlanComision()
-				// se hace el llamado a validarPapeleria()
-				// se hace el llamado a validarTipoUsuario()
-				// se hace el llamado a validarEmpresa usuario()
+				throw new ExcepcionComercial(MensajesNegocioClaves.KEY_AUTENTICACION_FALLIDA.value);
 			}
-			//return aut;
 		}
-		throw new BusinessException(MessagesBussinesKey.KEY_AUTENTICACION_FALLIDA.value);
+		throw new ExcepcionComercial(MensajesNegocioClaves.KEY_AUTENTICACION_FALLIDA.value);
 	}
-	private AutenticacionRespuestaDTO obtenerAutenticacionRespuestaDTO(AutenticacionRequestDTO credenciales,Object obj,String codificado) throws Exception {
+	/**
+	 * metodo que se encarga de armar todo el dto
+	 * @param credenciales
+	 * @param obj
+	 * @param codificado
+	 */
+	private AutenticacionRespuestaDTO obtenerAutenticacionRespuestaDTO(AutenticacionSolicitudDTO credenciales,Object obj,String codificado) throws Exception {
 		if(validarClave(credenciales,codificado)){
 			Long idUsuario =((Integer) ((List<?>) obj).get(Numero.ZERO.valueI)).longValue();
 			if(idUsuario != null && !idUsuario.equals(Numero.ZERO.valueL)){
-			Object obtenerRolEstado = obtenerRolEstado(credenciales);
-				// Se valida si el rol del usuario esta activo
-				String estadoRol = ((List<?>) obtenerRolEstado).get(Numero.UNO.valueI).toString();
-				if(!Estado.ACTIVO.equals(estadoRol)) {
-					throw new BusinessException(MessagesBussinesKey.KEY_ROL_USUARIO_NO_ACTIVO.value);
-				}
+				// Se valida si el rol del usuario esta activo o retorna la consulta
+				Object obtenerRolEstado = obtenerRolEstado(credenciales);
+				
 				// se verifica que el usuario si este activo
 				String estado = ((List<?>) obj).get(Numero.SEIS.valueI).toString();
 				if (!Estado.ACTIVO.equals(estado)) {
-					throw new BusinessException(MessagesBussinesKey.KEY_USUARIO_NO_ACTIVO.value);
+					throw new ExcepcionComercial(MensajesNegocioClaves.KEY_USUARIO_NO_ACTIVO.value);
 				}
 				// se construye el DTO con los datos personales del usuario
 				UsuarioDTO usuario = new UsuarioDTO();
@@ -94,6 +95,9 @@ public class AccesoLoginService {
 				obtenerEmpresasUsuario(response, idUsuario);
 				// se verifica si el usuario tiene ROL administrador
 				verificarRolAdministrador(usuario);
+				//obtener menu services
+				BienvenidaRespuestaDTO menu = obtenerMenu(usuario.getIdUsuario(),credenciales.getIdAplicacion());
+				response.setMenu(menu);
 				// se verifica si el usuario tiene programacion
 				if(Boolean.TRUE.equals(obtenerProgramacionRol(idUsuario))) {
 					UbicacionDTO programacion = obtenerProgramacionUsuario(idUsuario);
@@ -113,7 +117,7 @@ public class AccesoLoginService {
 		}
 		return null;
 	}
-	private void extractedIsBackoffice(AutenticacionRequestDTO credenciales, Long idUsuario, UsuarioDTO usuario, AutenticacionRespuestaDTO response, UbicacionDTO programacion) throws Exception {
+	private void extractedIsBackoffice(AutenticacionSolicitudDTO credenciales, Long idUsuario, UsuarioDTO usuario, AutenticacionRespuestaDTO response, UbicacionDTO programacion) throws Exception {
 		if(!Constant.ID_APLICACION_BACKOFFICE.equals(credenciales.getIdAplicacion())) {
 			Object[] verifiEmpresa = verificarEmpresaVenta(response.getItemsEmpresas());
 			if (Boolean.TRUE.equals(verifiEmpresa[0])) {
@@ -134,7 +138,7 @@ public class AccesoLoginService {
 	 * Metodo que permite verificar si el usuario está asociado a una empresa
 	 * @throws Exception
 	 */
-	private Object[] verificarEmpresaVenta(List<SelectItem> itemsEmpresas)  throws BusinessException {
+	private Object[] verificarEmpresaVenta(List<SelectItem> itemsEmpresas)  throws ExcepcionComercial {
 		Object[] result = new  Object[2] ;
 		result[0]= false;
 		if (itemsEmpresas != null && !itemsEmpresas.isEmpty()) {
@@ -147,12 +151,12 @@ public class AccesoLoginService {
 
 			}
 		}
-		throw new BusinessException(MessagesBussinesKey.KEY_EMPRESA_USUARIO.value);
+		throw new ExcepcionComercial(MensajesNegocioClaves.KEY_EMPRESA_USUARIO.value);
 	}
-	private BigDecimal obtenerBigDecimalValidacion(Object obj, UsuarioDTO usuario, AutenticacionRequestDTO credenciales) throws Exception {
-		Long obt = obtenerPlanComisionId(credenciales);
-		if(obt !=null) {
-			usuario.setIdPlanComision(obt);
+	private BigDecimal obtenerBigDecimalValidacion(Object obj, UsuarioDTO usuario, AutenticacionSolicitudDTO credenciales) throws Exception {
+		obtenerPlanComisionId(credenciales);
+		if(obtenerPlanComisionId(credenciales) !=null) {
+			usuario.setIdPlanComision(obtenerPlanComisionId(credenciales));
 		}
 		BigDecimal monto = BigDecimal.ZERO;
 		if(((List<?>) obj).get(Numero.CUATRO.valueI) != null) {
@@ -187,7 +191,7 @@ public class AccesoLoginService {
 	}
 
 	/** Conexiones micros */
-	private Object validarExisteUsuario(AutenticacionRequestDTO credenciales) throws Exception {
+	private Object validarExisteUsuario(AutenticacionSolicitudDTO credenciales) throws Exception {
 		ResponseEntity<?> response;
 		URI uri;
 		String url = UrlMicrosSolicitud.accesoUsuarios+"validarExisteUsuario?claveIngreso={0}&usuarioIngreso={1}&idAplicacion={2}";
@@ -197,14 +201,18 @@ public class AccesoLoginService {
 		params.add(credenciales.getIdAplicacion().toString());
 		String[] array = params.toArray(new String[2]);
 		uri = Util.buildUri(url, array);
-		response = this.generic.getService(uri, Object.class);
-		List<Object> result = (List<Object>) response.getBody();
-		if (result != null && !result.isEmpty()) {
-			return result;
+		try {
+			response = this.generic.getService(uri, Object.class);
+			List<Object> result = (List<Object>) response.getBody();
+			if (result != null && !result.isEmpty()) {
+				return result;
+			}
+		}catch (HttpClientErrorException e) {
+			throw new ExcepcionComercial(returnExcepcionComercial(e.getResponseBodyAsString()));
 		}
 		return null;
 	}
-	private boolean validarClave(AutenticacionRequestDTO credenciales, String codificado) throws Exception {
+	private boolean validarClave(AutenticacionSolicitudDTO credenciales, String codificado) throws Exception {
 
 		ResponseEntity<?> response;
 		boolean body;
@@ -223,7 +231,7 @@ public class AccesoLoginService {
 		}
 		return false;
 	}
-	private Object obtenerRolEstado(AutenticacionRequestDTO credenciales) throws Exception {
+	private Object obtenerRolEstado(AutenticacionSolicitudDTO credenciales) throws Exception {
 		ResponseEntity<?> response;
 		URI uri;
 		String url = UrlMicrosSolicitud.accesoRoles+"obtenerRolEstado?usuarioIngreso={0}";
@@ -231,14 +239,19 @@ public class AccesoLoginService {
 		params.add(credenciales.getUsuarioIngreso());
 		String[] array = params.toArray(new String[0]);
 		uri = Util.buildUri(url, array);
-		response = this.generic.getService(uri, Object.class);
-		List<Object> result = (List<Object>) response.getBody();
-		if (result != null && !result.isEmpty()) {
-			return result.get(Numero.ZERO.valueI);
+		try {
+			response = this.generic.getService(uri, Object.class);
+			List<Object> result = (List<Object>) response.getBody();
+			if (result != null && !result.isEmpty()) {
+				return result.get(Numero.ZERO.valueI);
+			}
+		}catch (HttpClientErrorException e) {
+			throw new ExcepcionComercial(returnExcepcionComercial(e.getResponseBodyAsString()));
 		}
 		return null;
 	}
-	private Long obtenerPlanComisionId(AutenticacionRequestDTO credenciales) throws Exception {
+	@SuppressWarnings("null")
+	private Long obtenerPlanComisionId(AutenticacionSolicitudDTO credenciales) throws Exception {
 
 		ResponseEntity<?> response;
 		Long body;
@@ -248,13 +261,24 @@ public class AccesoLoginService {
 		params.add(credenciales.getUsuarioIngreso());
 		String[] array = params.toArray(new String[0]);
 		uri = Util.buildUri(url, array);
-		response = this.generic.getService(uri, Object.class);
-		body = ((Integer) response.getBody()).longValue();
-
-		if (response.getStatusCode() == HttpStatus.OK && !ObjectUtils.isEmpty(body)) {
-			return body;
+		try {
+			response = this.generic.getService(uri, Object.class);
+			body = response.getBody() != null ? ((Integer) response.getBody()).longValue(): null;
+			if (response.getStatusCode() == HttpStatus.OK && !ObjectUtils.isEmpty(body)) {
+				return body;
+			}
+		} catch (HttpClientErrorException e) {
+			throw new ExcepcionComercial(returnExcepcionComercial(e.getResponseBodyAsString()));
 		}
 		return null;
+	}
+	/**
+	 * metodo que retorna la excepcion
+	 * @param msj que es mensaje de excepcion
+	*/
+	private String returnExcepcionComercial(String msj) {
+		String[] parts = msj.split(":");
+		return parts[1].substring(0, parts[1].length()-2).replace('"', ' ').trim();
 	}
 	private SelectItem obtenerEmpresasUsuario(Long idUsuario) throws Exception {
 		ResponseEntity<?> response;
@@ -264,13 +288,17 @@ public class AccesoLoginService {
 		params.add(idUsuario.toString());
 		String[] array = params.toArray(new String[0]);
 		uri = Util.buildUri(url, array);
-		response = this.generic.getService(uri, SelectItem.class);
-		//List<Object> result = (List<Object>) response.getBody();
-		if (response.getBody() != null ) {
-			return (SelectItem) response.getBody();
+		try {
+			response = this.generic.getService(uri, SelectItem.class);
+			if (response.getBody() != null ) {
+				return (SelectItem) response.getBody();
+			}
+		} catch (HttpClientErrorException e) {
+			throw new ExcepcionComercial(returnExcepcionComercial(e.getResponseBodyAsString()));
 		}
 		return null;
 	}
+	@SuppressWarnings("null")
 	private boolean obtenerProgramacionRol(Long idUsuario) throws Exception {
 
 		ResponseEntity<?> response;
@@ -297,10 +325,13 @@ public class AccesoLoginService {
 		params.add(idUsuario.toString());
 		String[] array = params.toArray(new String[0]);
 		uri = Util.buildUri(url, array);
-		response = this.generic.getService(uri, UbicacionDTO.class);
-		//List<Object> result = (List<Object>) response.getBody();
-		if (response.getBody() != null ) {
-			return (UbicacionDTO) response.getBody();
+		try {
+			response = this.generic.getService(uri, UbicacionDTO.class);
+			if (response.getBody() != null ) {
+				return (UbicacionDTO) response.getBody();
+			}
+		} catch (HttpClientErrorException e) {
+			throw new ExcepcionComercial(returnExcepcionComercial(e.getResponseBodyAsString()));
 		}
 		return null;
 	}
@@ -314,10 +345,13 @@ public class AccesoLoginService {
 		params.add(idAplicacion.toString());
 		String[] array = params.toArray(new String[2]);
 		uri = Util.buildUri(url, array);
-		response = this.generic.getService(uri, Object.class);
-		//List<Object> result = (List<Object>) response.getBody();
-		if (response.getBody() != null ) {
-			return (List<PapeleriaRolloDTO>) response.getBody();
+		try {
+			response = this.generic.getService(uri, Object.class);
+			if (response.getBody() != null ) {
+				return (List<PapeleriaRolloDTO>) response.getBody();
+			}
+		} catch (HttpClientErrorException e) {
+			throw new ExcepcionComercial(returnExcepcionComercial(e.getResponseBodyAsString()));
 		}
 		return null;
 	}
@@ -333,12 +367,33 @@ public class AccesoLoginService {
 		params.add(IdPuntoVenta.toString());
 		String[] array = params.toArray(new String[2]);
 		uri = Util.buildUri(url, array);
+		try {
 		response = this.generic.getService(uri, Object.class);
 		body = (boolean) response.getBody();
-
 		if (response.getStatusCode() == HttpStatus.OK && !ObjectUtils.isEmpty(body)) {
 			return body;
 		}
+		} catch (HttpClientErrorException e) {
+			throw new ExcepcionComercial(returnExcepcionComercial(e.getResponseBodyAsString()));
+		}
 		return false;
+	}
+
+
+	private BienvenidaRespuestaDTO obtenerMenu(Long idUsuario,int idAplicacion) throws Exception {
+		ResponseEntity<?> response;
+		URI uri;
+		String url = UrlMicrosSolicitud.menus+"validarPrivilegiosMenu";
+		uri = new URI(url);
+		
+		BienvenidaSolicitudDTO menu = new BienvenidaSolicitudDTO();
+		menu.setIdAplicacion(idAplicacion);
+		menu.setIdUsuario(idUsuario);
+		
+		response = this.generic.postService(uri,menu, BienvenidaRespuestaDTO.class);
+		if (response.getBody() != null ) {
+			return (BienvenidaRespuestaDTO) response.getBody();
+		}
+		return null;
 	}
 }

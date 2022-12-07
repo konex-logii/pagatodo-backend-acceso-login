@@ -29,29 +29,22 @@ public class GenericoHttp {
 
     public ResponseEntity<?> getService( String url, MultiValueMap<String, String> paramsApigee, Class<?> objectClass )
         throws Exception {
-
         URI uri = UriComponentsBuilder.fromUriString( url ).queryParams( paramsApigee ).build().toUri();
-
         return getService( uri, objectClass );
     }
 
     public ResponseEntity<?> getService( String url, String[] paramsApigee, Class<?> objectClass )
         throws Exception {
-
         URI uri = Util.buildUri( url, paramsApigee );
-
         return getService( uri, objectClass );
     }
 
     public ResponseEntity<?> getService( URI uri, Class<?> objectClass )
         throws Exception {
-
         ResponseEntity<?> response;
-
         response = ( ResponseEntity<?> ) this.httpClient.get( uri,
                                                               objectClass,
                                                               MediaType.APPLICATION_JSON                                                           );
-       
         if( !ObjectUtils.isEmpty( response ) ) {
           //  log.trace( "Service " + uri + " response with http status code: " + response.getStatusCode() + ". " +
                      //  "Response:  " + ( new Gson() ).toJson( response ) );
@@ -59,8 +52,23 @@ public class GenericoHttp {
         else {
         //    log.warn( "Response is empty: " + response );
         }
-       
         return response;
     }
+    public ResponseEntity<?> postService( URI uri,Object data, Class<?> objectClass )
+            throws Exception {
+            ResponseEntity<?> response;
+            response = ( ResponseEntity<?> ) this.httpClient.post( uri,
+            														data,
+                                                                  objectClass,
+                                                                  MediaType.APPLICATION_JSON                                                           );
+            if( !ObjectUtils.isEmpty( response ) ) {
+              //  log.trace( "Service " + uri + " response with http status code: " + response.getStatusCode() + ". " +
+                         //  "Response:  " + ( new Gson() ).toJson( response ) );
+            }
+            else {
+            //    log.warn( "Response is empty: " + response );
+            }
+            return response;
+        }
 
 }

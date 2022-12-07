@@ -3,7 +3,7 @@ package com.acceso.login.constants;
 /**
  * Se debe mandar el codigo del business messages al cliente (angular, movil)
  */
-public enum MessagesBussinesKey {
+public enum MensajesNegocioClaves {
 
 	/** 400 - Credenciales incorrectas. Inténtalo de nuevo. */
 	KEY_AUTENTICACION_FALLIDA("security-0001"),
@@ -20,7 +20,7 @@ public enum MessagesBussinesKey {
 	KEY_VOICE_ERROR("voice-001");
 
 	public final String value;
-	private MessagesBussinesKey(String value) {
+	private MensajesNegocioClaves(String value) {
 		this.value = value;
 	}
 }

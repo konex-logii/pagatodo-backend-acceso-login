@@ -4,13 +4,17 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 /**
  * DTO para encapsular los datos que se envía cuando inician sesión ante al
  * sistema
  */
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
 public class AutenticacionRespuestaDTO implements Serializable {
 	private static final long serialVersionUID = 1L;
 
@@ -22,6 +26,9 @@ public class AutenticacionRespuestaDTO implements Serializable {
 
 	/** Son las empresas asociados al usuario autenticado */
 	private List<SelectItem> itemsEmpresas;
+	
+	/** Son las cofiguraciones de menu */
+	private BienvenidaRespuestaDTO menu;
 
 	/**
 	 * Metodo que permie agregar una empresa asociada al usuario

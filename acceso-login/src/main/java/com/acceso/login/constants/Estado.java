@@ -10,6 +10,4 @@ public class Estado {
 	public static final String ACTIVO = "ACTIVO";
 	public static final String INACTIVO = "INACTIVO";
 	public static final String ASIGNADO = "ASIGNADO";
-	public static final Integer SMS_ACTIVO = 1;
-	public static final Integer SMS_INACTIVO = 0;
 }

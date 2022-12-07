@@ -4,12 +4,16 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 /**
  * DTO para encapsular los datos personales del usuario autenticado
  */
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
 public class UsuarioDTO implements Serializable {
 	private static final long serialVersionUID = 1L;
 
