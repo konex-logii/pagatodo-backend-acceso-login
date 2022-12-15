@@ -22,7 +22,7 @@ import static org.reflections.Reflections.log;
  * localhost:puerto/auth/
  */
 @RestController
-@RequestMapping("/seguridad")
+@RequestMapping("/acceso-login")
 public class AccesoLoginResource {
 
 	/** Service para que contiene los procesos de negocio para la autenticacion */
