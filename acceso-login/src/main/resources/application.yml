@@ -32,4 +32,4 @@ management:
 
 #Port - If 0 get random port
 server:
-  port: 8082
+  port: 8180

@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>2.7.5</version>
-		<relativePath/> <!-- lookup parent from repository -->
+		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.acceso-login</groupId>
 	<artifactId>acceso-login</artifactId>
@@ -17,8 +16,7 @@
 		<java.version>17</java.version>
 		<spring-cloud.version>2021.0.4</spring-cloud.version>
 		<junit-platform.version>5.3.1</junit-platform.version>
-		<springfox-swagger-ui.version>2.7.0</springfox-swagger-ui.version>
-		<springfox-swagger2.version>2.7.0</springfox-swagger2.version>	
+		<springfox-swagger2.version>2.7.0</springfox-swagger2.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -60,14 +58,23 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>io.springfox</groupId>
 			<artifactId>springfox-swagger2</artifactId>
 			<version>${springfox-swagger2.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>io.springfox</groupId>
-			<artifactId>springfox-swagger-ui</artifactId>
-			<version>${springfox-swagger-ui.version}</version>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			<type>jar</type>
+		</dependency>
+		<dependency>
+			<groupId>org.springdoc</groupId>
+			<artifactId>springdoc-openapi-ui</artifactId>
+			<version>1.6.4</version>
 		</dependency>
 	</dependencies>
 
