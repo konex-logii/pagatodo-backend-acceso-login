@@ -7,12 +7,12 @@ package com.acceso.login.constants;
 
 public class UrlMicrosSolicitud {
     /** Es la clave de ingreso al sistema */
-    public static final String accesoUsuarios = "http://localhost:8083/acceso-usuarios/";
-    public static final String accesoRoles = "http://localhost:8087/accesoRoles/";
-    public static final String comisiones = "http://localhost:8085/comisiones/";
-    public static final String administracionEmpresas = "http://localhost:8086/administracionEmpresas/";
-    public static final String administracionHorario = "http://localhost:8084/administracionHorario/";
-    public static final String administracionPapeleria = "http://localhost:8190/administracionPapeleria/";
-    public static final String adminOperacionComercial = "http://localhost:8082/operacion-comercial/";
-    public static final String menus = "http://localhost:8088/menu/";
+    public static final String accesoUsuarios = "http://logii-test-alb-696494596.us-east-1.elb.amazonaws.com:8200/acceso-usuarios/";
+    public static final String accesoRoles = "http://logii-test-alb-696494596.us-east-1.elb.amazonaws.com:8199/accesoRoles/";
+    public static final String comisiones = "http://logii-test-alb-696494596.us-east-1.elb.amazonaws.com:8197/comisiones/";
+    public static final String administracionEmpresas = "http://logii-test-alb-696494596.us-east-1.elb.amazonaws.com:8198/administracionEmpresas/";
+    public static final String administracionHorario = "http://logii-test-alb-696494596.us-east-1.elb.amazonaws.com:8195/administracionHorario/";
+    public static final String administracionPapeleria = "http://logii-test-alb-696494596.us-east-1.elb.amazonaws.com:8190/administracionPapeleria/";
+    public static final String adminOperacionComercial = "http://logii-test-alb-696494596.us-east-1.elb.amazonaws.com:8194/operacion-comercial/";
+    public static final String menus = "http://logii-test-alb-696494596.us-east-1.elb.amazonaws.com:8390/menu/";
 }
