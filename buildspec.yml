@@ -6,6 +6,13 @@ phases:
       java: corretto17
   pre_build:
     commands:
+      - wget http://www-eu.apache.org/dist/maven/maven-3/3.8.7/binaries/apache-maven-3.8.7-bin.tar.gz
+      
+      - wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.4.0.2170-linux.zip
+      - unzip sonar-scanner-cli-4.4.0.2170-linux.zip
+      - mv sonar-scanner-4.4.0.2170-linux /opt/sonar-scanner
+      - chmod -R 775 /opt/sonar-scanner
+      - echo "stage pre_build completed"    
       - cd acceso-login
       - mvn -version
       - mvn clean
@@ -19,6 +26,7 @@ phases:
   build:
     commands:
       - echo Build started on `date`
+      - mvn sonar:sonar -Dsonar.projectKey=$PROJECT -Dsonar.host.url=$HOST_SONAR -Dsonar.login=$TOKEN_SONAR 
       - echo Building the Docker image...
       - docker build -t $ECR_REPOSITORY_URI:latest .
       - docker tag $ECR_REPOSITORY_URI:latest $ECR_REPOSITORY_URI:$IMAGE_TAG
