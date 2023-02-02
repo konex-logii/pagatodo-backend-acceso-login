@@ -41,8 +41,8 @@ class AccesoLoginResourceTest {
 	@Test
 	void testIniciarSesionBackoffices() {
 		AutenticacionSolicitudDTO credenciales = new AutenticacionSolicitudDTO();
-		credenciales.setClaveIngreso("123456");
-		credenciales.setUsuarioIngreso("123456");
+		credenciales.setClaveIngreso("ADATACENTER10");
+		credenciales.setUsuarioIngreso("10101012");
 		credenciales.setIdAplicacion(1);
 		responseEntity = accesoLoginResource.iniciarSesion(credenciales);
 		assertAll("resultado",
