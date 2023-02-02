@@ -1,5 +1,6 @@
 package com.acceso.login.http;
 
+import java.io.IOException;
 import java.net.URI;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
@@ -44,33 +45,33 @@ public class Http implements ClienteHttpService {
 	
 
     @Override
-    public ResponseEntity<?> get( URI uri, Class<?> object, MediaType mediaType )
-        throws Exception {
+    public ResponseEntity<?> get( URI uri, Class<?> object, MediaType mediaType ) 
+    	throws IOException , KeyManagementException, NoSuchAlgorithmException, KeyStoreException  {
         return execute( uri, HttpMethod.GET, null, object, mediaType,  true );
     }
 
     @Override
     public ResponseEntity<?> delete( URI uri, Class<?> object, MediaType mediaType)
-        throws Exception {
+    		throws IOException , KeyManagementException, NoSuchAlgorithmException, KeyStoreException  {
         return execute( uri, HttpMethod.DELETE, null, object, mediaType,  true );
     }
 
     @Override
     public ResponseEntity<?> post( URI uri, Object data, Class<?> objectClass, MediaType mediaType )
-        throws Exception {
+    		throws IOException , KeyManagementException, NoSuchAlgorithmException, KeyStoreException  {
         return execute( uri, HttpMethod.POST, data, objectClass, mediaType,  true );
     }
 
     @Override
     public ResponseEntity<?> put( URI uri, Object data, Class<?> objectClass, MediaType mediaType )
-        throws Exception {
+    		throws IOException , KeyManagementException, NoSuchAlgorithmException, KeyStoreException  {
         return execute( uri, HttpMethod.PUT, data, objectClass, mediaType, true );
     }
 
  
 
     private ResponseEntity<?> execute( URI uri, HttpMethod httpMethod, Object requestParam, Class<?> objectClass, MediaType mediaType,  Boolean activeSSL )
-        throws Exception {
+    	throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException {
 
         HttpHeaders headers = new HttpHeaders();
 
@@ -91,7 +92,9 @@ public class Http implements ClienteHttpService {
 
         ResponseEntity<?> response;
 
-        Long initTime, endTime, totalTime;
+        Long initTime;
+        Long endTime;
+        Long totalTime;
 
         initTime = System.currentTimeMillis();
 
@@ -101,18 +104,12 @@ public class Http implements ClienteHttpService {
 
         Integer timeoutHttp = 1;
 
-        String gp = null;
-
-        if( gp != null ) {
-            timeoutHttp = Integer.parseInt(gp );
-        }
-
         restTemplate = builder
             .setReadTimeout( Duration.ofMinutes( timeoutHttp ) )
             .setConnectTimeout( Duration.ofMinutes( timeoutHttp ) )
             .build();
 
-        if( !activeSSL ) {
+        if( Boolean.FALSE.equals(activeSSL) ) {
             restTemplate.setRequestFactory( this.requestFactory() );
         }
 
@@ -121,9 +118,9 @@ public class Http implements ClienteHttpService {
         endTime = System.currentTimeMillis();
 
         totalTime = endTime - initTime;
-
-       log.info( "El tiempo de respuesta de " + uri + " es de " + totalTime + " ms" );
-
+        String mensajeInformacionTiempo = "El tiempo de respuesta de " + uri + " es de " + totalTime + " ms";
+        log.info(mensajeInformacionTiempo);
+       
         return response;
     }
 

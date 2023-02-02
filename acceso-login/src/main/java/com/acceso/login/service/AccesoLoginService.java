@@ -1,17 +1,19 @@
 package com.acceso.login.service;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URI;
+import java.net.URISyntaxException;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 
 import com.acceso.login.constants.*;
 import com.acceso.login.dto.*;
 import com.acceso.login.dto.autenticacion.UbicacionDTO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -22,8 +24,6 @@ import com.acceso.login.util.ExcepcionComercial;
 import com.acceso.login.util.Util;
 import com.acceso.login.http.GenericoHttp;
 
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.client.HttpClientErrorException;
 
@@ -43,10 +43,10 @@ public class AccesoLoginService {
 	 *
 	 * @param credenciales DTO que contiene los datos de las credenciales
 	 * @return DTO con los datos del response para la autenticacion en el sistema
+	 * @throws URISyntaxException 
 	 * @throws Exception
 	 */
-	public AutenticacionRespuestaDTO iniciarSesion(AutenticacionSolicitudDTO credenciales) throws Exception {
-		AutenticacionRespuestaDTO aut = new AutenticacionRespuestaDTO();
+	public AutenticacionRespuestaDTO iniciarSesion(AutenticacionSolicitudDTO credenciales) throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException, IOException, ExcepcionComercial, URISyntaxException  {
 		if (credenciales != null && !Util.isNull(credenciales.getClaveIngreso()) && !Util.isNull(credenciales.getUsuarioIngreso())) {
 			Object obj = validarExisteUsuario(credenciales);
 
@@ -65,8 +65,9 @@ public class AccesoLoginService {
 	 * @param credenciales
 	 * @param obj
 	 * @param codificado
+	 * @throws URISyntaxException 
 	 */
-	private AutenticacionRespuestaDTO obtenerAutenticacionRespuestaDTO(AutenticacionSolicitudDTO credenciales,Object obj,String codificado) throws Exception {
+	private AutenticacionRespuestaDTO obtenerAutenticacionRespuestaDTO(AutenticacionSolicitudDTO credenciales,Object obj,String codificado) throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException, IOException, ExcepcionComercial, URISyntaxException {
 		if(validarClave(credenciales,codificado)){
 			Long idUsuario =((Integer) ((List<?>) obj).get(Numero.ZERO.valueI)).longValue();
 			if(idUsuario != null && !idUsuario.equals(Numero.ZERO.valueL)){
@@ -117,7 +118,7 @@ public class AccesoLoginService {
 		}
 		return null;
 	}
-	private void extractedIsBackoffice(AutenticacionSolicitudDTO credenciales, Long idUsuario, UsuarioDTO usuario, AutenticacionRespuestaDTO response, UbicacionDTO programacion) throws Exception {
+	private void extractedIsBackoffice(AutenticacionSolicitudDTO credenciales, Long idUsuario, UsuarioDTO usuario, AutenticacionRespuestaDTO response, UbicacionDTO programacion) throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException, IOException, ExcepcionComercial  {
 		if(!Constant.ID_APLICACION_BACKOFFICE.equals(credenciales.getIdAplicacion())) {
 			Object[] verifiEmpresa = verificarEmpresaVenta(response.getItemsEmpresas());
 			if (Boolean.TRUE.equals(verifiEmpresa[0])) {
@@ -138,7 +139,7 @@ public class AccesoLoginService {
 	 * Metodo que permite verificar si el usuario está asociado a una empresa
 	 * @throws Exception
 	 */
-	private Object[] verificarEmpresaVenta(List<SelectItem> itemsEmpresas)  throws ExcepcionComercial {
+	private Object[] verificarEmpresaVenta(List<SelectItem> itemsEmpresas)  throws  ExcepcionComercial  {
 		Object[] result = new  Object[2] ;
 		result[0]= false;
 		if (itemsEmpresas != null && !itemsEmpresas.isEmpty()) {
@@ -153,7 +154,7 @@ public class AccesoLoginService {
 		}
 		throw new ExcepcionComercial(MensajesNegocioClaves.KEY_EMPRESA_USUARIO.value);
 	}
-	private BigDecimal obtenerBigDecimalValidacion(Object obj, UsuarioDTO usuario, AutenticacionSolicitudDTO credenciales) throws Exception {
+	private BigDecimal obtenerBigDecimalValidacion(Object obj, UsuarioDTO usuario, AutenticacionSolicitudDTO credenciales) throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException, IOException, ExcepcionComercial  {
 		obtenerPlanComisionId(credenciales);
 		if(obtenerPlanComisionId(credenciales) !=null) {
 			usuario.setIdPlanComision(obtenerPlanComisionId(credenciales));
@@ -168,7 +169,7 @@ public class AccesoLoginService {
 	/**
 	 * Metodo que permite obtener las empresas del usuario autenticado
 	 */
-	private void obtenerEmpresasUsuario(AutenticacionRespuestaDTO response, Long idUsuario) throws Exception {
+	private void obtenerEmpresasUsuario(AutenticacionRespuestaDTO response, Long idUsuario) throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException, IOException, ExcepcionComercial  {
 		SelectItem itemEmpresa = obtenerEmpresasUsuario(idUsuario);
 		if (itemEmpresa != null ) {
 			response.agregarItemEmpresa(itemEmpresa);
@@ -191,11 +192,11 @@ public class AccesoLoginService {
 	}
 
 	/** Conexiones micros */
-	private Object validarExisteUsuario(AutenticacionSolicitudDTO credenciales) throws Exception {
+	private Object validarExisteUsuario(AutenticacionSolicitudDTO credenciales) throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException, IOException, ExcepcionComercial  {
 		ResponseEntity<?> response;
 		URI uri;
-		String url = UrlMicrosSolicitud.accesoUsuarios+"validarExisteUsuario?claveIngreso={0}&usuarioIngreso={1}&idAplicacion={2}";
-		List<String> params = new ArrayList<String>();
+		String url = UrlMicrosSolicitud.ACCESO_USUARIOS+"validarExisteUsuario?claveIngreso={0}&usuarioIngreso={1}&idAplicacion={2}";
+		List<String> params = new ArrayList<>();
 		params.add(credenciales.getClaveIngreso());
 		params.add(credenciales.getUsuarioIngreso());
 		params.add(credenciales.getIdAplicacion().toString());
@@ -212,13 +213,13 @@ public class AccesoLoginService {
 		}
 		return null;
 	}
-	private boolean validarClave(AutenticacionSolicitudDTO credenciales, String codificado) throws Exception {
+	private boolean validarClave(AutenticacionSolicitudDTO credenciales, String codificado) throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException, IOException {
 
 		ResponseEntity<?> response;
 		boolean body;
 		URI uri;
-		String url = UrlMicrosSolicitud.accesoUsuarios+"verificarClave?clave={0}&codificada={1}";
-		List<String> params = new ArrayList<String>();
+		String url = UrlMicrosSolicitud.ACCESO_USUARIOS+"verificarClave?clave={0}&codificada={1}";
+		List<String> params = new ArrayList<>();
 		params.add(credenciales.getClaveIngreso());
 		params.add(codificado);
 		String[] array = params.toArray(new String[1]);
@@ -231,11 +232,11 @@ public class AccesoLoginService {
 		}
 		return false;
 	}
-	private Object obtenerRolEstado(AutenticacionSolicitudDTO credenciales) throws Exception {
+	private Object obtenerRolEstado(AutenticacionSolicitudDTO credenciales) throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException, IOException, ExcepcionComercial  {
 		ResponseEntity<?> response;
 		URI uri;
-		String url = UrlMicrosSolicitud.accesoRoles+"obtenerRolEstado?usuarioIngreso={0}";
-		List<String> params = new ArrayList<String>();
+		String url = UrlMicrosSolicitud.ACCESO_ROLES+"obtenerRolEstado?usuarioIngreso={0}";
+		List<String> params = new ArrayList<>();
 		params.add(credenciales.getUsuarioIngreso());
 		String[] array = params.toArray(new String[0]);
 		uri = Util.buildUri(url, array);
@@ -251,13 +252,13 @@ public class AccesoLoginService {
 		return null;
 	}
 	@SuppressWarnings("null")
-	private Long obtenerPlanComisionId(AutenticacionSolicitudDTO credenciales) throws Exception {
+	private Long obtenerPlanComisionId(AutenticacionSolicitudDTO credenciales) throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException, IOException, ExcepcionComercial {
 
 		ResponseEntity<?> response;
 		Long body;
 		URI uri;
-		String url = UrlMicrosSolicitud.comisiones+"obtenerPlanComisionId?usuarioIngreso={0}";
-		List<String> params = new ArrayList<String>();
+		String url = UrlMicrosSolicitud.COMISIONES+"obtenerPlanComisionId?usuarioIngreso={0}";
+		List<String> params = new ArrayList<>();
 		params.add(credenciales.getUsuarioIngreso());
 		String[] array = params.toArray(new String[0]);
 		uri = Util.buildUri(url, array);
@@ -280,11 +281,11 @@ public class AccesoLoginService {
 		String[] parts = msj.split(":");
 		return parts[1].substring(0, parts[1].length()-2).replace('"', ' ').trim();
 	}
-	private SelectItem obtenerEmpresasUsuario(Long idUsuario) throws Exception {
+	private SelectItem obtenerEmpresasUsuario(Long idUsuario) throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException, IOException, ExcepcionComercial  {
 		ResponseEntity<?> response;
 		URI uri;
-		String url = UrlMicrosSolicitud.administracionEmpresas+"obtenerEmpresasUsuario?idUsuarioIngreso={0}";
-		List<String> params = new ArrayList<String>();
+		String url = UrlMicrosSolicitud.ADMINISTRACION_EMPRESAS+"obtenerEmpresasUsuario?idUsuarioIngreso={0}";
+		List<String> params = new ArrayList<>();
 		params.add(idUsuario.toString());
 		String[] array = params.toArray(new String[0]);
 		uri = Util.buildUri(url, array);
@@ -299,13 +300,13 @@ public class AccesoLoginService {
 		return null;
 	}
 	@SuppressWarnings("null")
-	private boolean obtenerProgramacionRol(Long idUsuario) throws Exception {
+	private boolean obtenerProgramacionRol(Long idUsuario) throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException, IOException  {
 
 		ResponseEntity<?> response;
 		boolean body;
 		URI uri;
-		String url = UrlMicrosSolicitud.accesoRoles+"obtenerProgramacionRol?idUsuario={0}";
-		List<String> params = new ArrayList<String>();
+		String url = UrlMicrosSolicitud.ACCESO_ROLES+"obtenerProgramacionRol?idUsuario={0}";
+		List<String> params = new ArrayList<>();
 		params.add(idUsuario.toString());
 		String[] array = params.toArray(new String[0]);
 		uri = Util.buildUri(url, array);
@@ -317,11 +318,11 @@ public class AccesoLoginService {
 		}
 		return false;
 	}
-	private UbicacionDTO obtenerProgramacionUsuario(Long idUsuario) throws Exception {
+	private UbicacionDTO obtenerProgramacionUsuario(Long idUsuario) throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException, IOException, ExcepcionComercial  {
 		ResponseEntity<?> response;
 		URI uri;
-		String url = UrlMicrosSolicitud.administracionHorario+"obtenerProgramacionUsuario?idUsuarioIngreso={0}";
-		List<String> params = new ArrayList<String>();
+		String url = UrlMicrosSolicitud.ADMINISTRACION_HORARIO+"obtenerProgramacionUsuario?idUsuarioIngreso={0}";
+		List<String> params = new ArrayList<>();
 		params.add(idUsuario.toString());
 		String[] array = params.toArray(new String[0]);
 		uri = Util.buildUri(url, array);
@@ -335,11 +336,11 @@ public class AccesoLoginService {
 		}
 		return null;
 	}
-	private List<PapeleriaRolloDTO> obtnenerRollosPorIdVendedor(Long idVendedor ,Long idEmpresa ,Long idAplicacion ) throws Exception {
+	private List<PapeleriaRolloDTO> obtnenerRollosPorIdVendedor(Long idVendedor ,Long idEmpresa ,Long idAplicacion ) throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException, IOException, ExcepcionComercial  {
 		ResponseEntity<?> response;
 		URI uri;
-		String url = UrlMicrosSolicitud.administracionPapeleria+"obtenerRollosPorIdVendedor?idVendedor={0}&idEmpresa={1}&idAplicacion={2}";
-		List<String> params = new ArrayList<String>();
+		String url = UrlMicrosSolicitud.ADMINISTRACION_PAPELERIA+"obtenerRollosPorIdVendedor?idVendedor={0}&idEmpresa={1}&idAplicacion={2}";
+		List<String> params = new ArrayList<>();
 		params.add(idVendedor.toString());
 		params.add(idEmpresa.toString());
 		params.add(idAplicacion.toString());
@@ -355,16 +356,16 @@ public class AccesoLoginService {
 		}
 		return null;
 	}
-	private boolean validacionPuntoVentaZonaSubZonaActiva(Long idZona,Long IdPuntoVenta, Long idUsuario) throws Exception {
+	private boolean validacionPuntoVentaZonaSubZonaActiva(Long idZona,Long idPuntoVenta, Long idUsuario) throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException, IOException, ExcepcionComercial  {
 
 		ResponseEntity<?> response;
 		boolean body;
 		URI uri;
-		String url = UrlMicrosSolicitud.adminOperacionComercial+"validacionPuntoVentaZonaSubZonaActiva?idUsuario={0}&idZona={1}&idPuntoVenta={2}";
-		List<String> params = new ArrayList<String>();
+		String url = UrlMicrosSolicitud.ADMINISTRACION_OPERACION_COMERCIAL+"validacionPuntoVentaZonaSubZonaActiva?idUsuario={0}&idZona={1}&idPuntoVenta={2}";
+		List<String> params = new ArrayList<>();
 		params.add(idUsuario.toString());
 		params.add(idZona.toString());
-		params.add(IdPuntoVenta.toString());
+		params.add(idPuntoVenta.toString());
 		String[] array = params.toArray(new String[2]);
 		uri = Util.buildUri(url, array);
 		try {
@@ -380,10 +381,10 @@ public class AccesoLoginService {
 	}
 
 
-	private BienvenidaRespuestaDTO obtenerMenu(Long idUsuario,int idAplicacion) throws Exception {
+	private BienvenidaRespuestaDTO obtenerMenu(Long idUsuario,int idAplicacion) throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException, IOException, URISyntaxException  {
 		ResponseEntity<?> response;
 		URI uri;
-		String url = UrlMicrosSolicitud.menus+"validarPrivilegiosMenu";
+		String url = UrlMicrosSolicitud.MENUS+"validarPrivilegiosMenu";
 		uri = new URI(url);
 		
 		BienvenidaSolicitudDTO menu = new BienvenidaSolicitudDTO();

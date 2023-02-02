@@ -14,12 +14,16 @@ class AccesoLoginResourceTest {
 	@Autowired
 	AccesoLoginResource accesoLoginResource;
 	private static ResponseEntity<Object> responseEntity =  null ;
+	private static String claveIngresoTest ="DDIAZ10";
+	private static String usuarioIngresoTest = "1094970590";
+	private static Integer idAplicacion = 2;
+	
 	@Test
 	void testIniciarSesionVentas() {
 		AutenticacionSolicitudDTO credenciales = new AutenticacionSolicitudDTO();
-		credenciales.setClaveIngreso("DDIAZ10");
-		credenciales.setUsuarioIngreso("1094970590");
-		credenciales.setIdAplicacion(2);
+		credenciales.setClaveIngreso(claveIngresoTest);
+		credenciales.setUsuarioIngreso(usuarioIngresoTest);
+		credenciales.setIdAplicacion(idAplicacion);
 		responseEntity = accesoLoginResource.iniciarSesion(credenciales);
 		assertAll("resultado",
 				() -> assertNotNull(responseEntity.getBody()),
@@ -30,8 +34,8 @@ class AccesoLoginResourceTest {
 	void testIniciarSesionVentasFallas() {
 		AutenticacionSolicitudDTO credenciales = new AutenticacionSolicitudDTO();
 		credenciales.setClaveIngreso("DDIAZ1s0");
-		credenciales.setUsuarioIngreso("1094970590");
-		credenciales.setIdAplicacion(2);
+		credenciales.setUsuarioIngreso(usuarioIngresoTest);
+		credenciales.setIdAplicacion(idAplicacion);
 		responseEntity = accesoLoginResource.iniciarSesion(credenciales);
 		assertAll("resultado",
 				() -> assertNotNull(responseEntity.getBody()),
