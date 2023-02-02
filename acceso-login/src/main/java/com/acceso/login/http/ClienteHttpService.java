@@ -1,7 +1,11 @@
 package com.acceso.login.http;
 
 
+import java.io.IOException;
 import java.net.URI;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
 
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +21,7 @@ public interface ClienteHttpService {
 	 * @return
      * @throws java.lang.Exception
 	 */
-	ResponseEntity<?> get(URI uri, Class<?> object, MediaType mediaType) throws Exception;
+	ResponseEntity<?> get(URI uri, Class<?> object, MediaType mediaType) throws IOException,  KeyManagementException, NoSuchAlgorithmException, KeyStoreException;
 	/**
 	 * Metodo para peticiones DELETE
 	 * @param uri
@@ -27,7 +31,7 @@ public interface ClienteHttpService {
 	 * @return
      * @throws java.lang.Exception
 	 */
-	ResponseEntity<?> delete(URI uri, Class<?> object, MediaType mediaType) throws Exception;
+	ResponseEntity<?> delete(URI uri, Class<?> object, MediaType mediaType) throws IOException,  KeyManagementException, NoSuchAlgorithmException, KeyStoreException;
 	/**
 	 * Metodo para peticiones POST
 	 * @param uri
@@ -38,7 +42,7 @@ public interface ClienteHttpService {
 	 * @return
      * @throws java.lang.Exception
 	 */
-	ResponseEntity<?> post(URI uri, Object data, Class<?> objectClass, MediaType mediaType) throws Exception;
+	ResponseEntity<?> post(URI uri, Object data, Class<?> objectClass, MediaType mediaType) throws IOException,  KeyManagementException, NoSuchAlgorithmException, KeyStoreException;
 	/**
 	 * Metodo para peticiones PUT
 	 * @param uri
@@ -49,5 +53,5 @@ public interface ClienteHttpService {
 	 * @return
      * @throws java.lang.Exception
 	 */
-	ResponseEntity<?> put(URI uri, Object data, Class<?> objectClass, MediaType mediaType) throws Exception;
+	ResponseEntity<?> put(URI uri, Object data, Class<?> objectClass, MediaType mediaType) throws IOException,  KeyManagementException, NoSuchAlgorithmException, KeyStoreException;
 }
