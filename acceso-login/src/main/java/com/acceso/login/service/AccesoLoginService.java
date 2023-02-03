@@ -8,6 +8,7 @@ import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import com.acceso.login.constants.*;
@@ -354,7 +355,7 @@ public class AccesoLoginService {
 		} catch (HttpClientErrorException e) {
 			throw new ExcepcionComercial(returnExcepcionComercial(e.getResponseBodyAsString()));
 		}
-		return null;
+		return Collections.emptyList();
 	}
 	private boolean validacionPuntoVentaZonaSubZonaActiva(Long idZona,Long idPuntoVenta, Long idUsuario) throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException, IOException, ExcepcionComercial  {
 
