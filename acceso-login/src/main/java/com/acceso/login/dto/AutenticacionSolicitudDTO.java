@@ -5,6 +5,7 @@ import java.io.Serializable;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 /**
  * DTO para encapsular los datos que se envia desde el cliente
@@ -13,6 +14,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
+@ToString
 public class AutenticacionSolicitudDTO implements Serializable {
 	private static final long serialVersionUID = 1L;
 

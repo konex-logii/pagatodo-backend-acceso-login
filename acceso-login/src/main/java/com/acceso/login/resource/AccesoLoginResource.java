@@ -28,6 +28,8 @@ public class AccesoLoginResource {
 	/** Service para que contiene los procesos de negocio para la autenticacion */
 	@Autowired
 	private AccesoLoginService accesoLoginService;
+	
+
 
 	/**
 	 * Servicio que soporta el proceso de negocio para la autenticacion en el sistema
@@ -43,14 +45,18 @@ public class AccesoLoginResource {
 			@ApiResponse(code = 404, message = "Recurso no encontrado"),
 			@ApiResponse(code = 500, message = "Internal Server Error")})
 	public ResponseEntity<Object> iniciarSesion(@RequestBody AutenticacionSolicitudDTO credenciales) {
+		String logMensaje = "iniciarSesion:  " + credenciales.toString();
 		try {
-			log.info("INFORMACION iniciarSesion: "+credenciales);
+			logMensaje = "INFORMACION " + logMensaje;
+			log.info(logMensaje);
 			return Util.getResponseSuccessful(this.accesoLoginService.iniciarSesion(credenciales));
 		} catch (ExcepcionComercial e) {
-			log.error("ERROR iniciarSesion: "+e.getMessage());
+			logMensaje = "ERROR COMERCIAL " + logMensaje + " MENSAJE: " +e.getMessage();
+			log.info(logMensaje);
 			return Util.getResponseBadRequest(e.getMessage());
 		} catch (Exception e	) {
-			log.error("ERROR iniciarSesion: "+e.getMessage());
+			logMensaje = "ERROR  " + logMensaje + " MENSAJE: " +e.getMessage();
+            log.info(logMensaje);
 			return Util.getResponseError(AccesoLoginResource.class.getSimpleName() + ".iniciarSesion ", e.getMessage());
 		}
 	}
