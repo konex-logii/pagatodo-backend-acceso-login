@@ -21,7 +21,7 @@ public interface ClienteHttpService {
 	 * @return
      * @throws java.lang.Exception
 	 */
-	ResponseEntity<?> get(URI uri, Class<?> object, MediaType mediaType) throws IOException,  KeyManagementException, NoSuchAlgorithmException, KeyStoreException;
+	<T>ResponseEntity<T> get(URI uri, Class<T> object, MediaType mediaType) throws IOException,  KeyManagementException, NoSuchAlgorithmException, KeyStoreException;
 	/**
 	 * Metodo para peticiones DELETE
 	 * @param uri
@@ -31,7 +31,7 @@ public interface ClienteHttpService {
 	 * @return
      * @throws java.lang.Exception
 	 */
-	ResponseEntity<?> delete(URI uri, Class<?> object, MediaType mediaType) throws IOException,  KeyManagementException, NoSuchAlgorithmException, KeyStoreException;
+	<T>ResponseEntity<T> delete(URI uri, Class<T> object, MediaType mediaType) throws IOException,  KeyManagementException, NoSuchAlgorithmException, KeyStoreException;
 	/**
 	 * Metodo para peticiones POST
 	 * @param uri
@@ -42,7 +42,7 @@ public interface ClienteHttpService {
 	 * @return
      * @throws java.lang.Exception
 	 */
-	ResponseEntity<?> post(URI uri, Object data, Class<?> objectClass, MediaType mediaType) throws IOException,  KeyManagementException, NoSuchAlgorithmException, KeyStoreException;
+	<T>ResponseEntity<T> post(URI uri, Object data, Class<T> objectClass, MediaType mediaType) throws IOException,  KeyManagementException, NoSuchAlgorithmException, KeyStoreException;
 	/**
 	 * Metodo para peticiones PUT
 	 * @param uri
@@ -53,5 +53,5 @@ public interface ClienteHttpService {
 	 * @return
      * @throws java.lang.Exception
 	 */
-	ResponseEntity<?> put(URI uri, Object data, Class<?> objectClass, MediaType mediaType) throws IOException,  KeyManagementException, NoSuchAlgorithmException, KeyStoreException;
+	<T>ResponseEntity<T> put(URI uri, Object data, Class<T> objectClass, MediaType mediaType) throws IOException,  KeyManagementException, NoSuchAlgorithmException, KeyStoreException;
 }

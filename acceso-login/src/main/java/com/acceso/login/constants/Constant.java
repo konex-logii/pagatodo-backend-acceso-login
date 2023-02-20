@@ -1,12 +1,11 @@
 package com.acceso.login.constants;
 
-import lombok.experimental.UtilityClass;
-
 /**
  * Clase constante que contiene los identificadores de las aplicaciones
  */
-@UtilityClass
-public class Constant {
+
+public final class Constant {
+	private Constant() {}
     /** Identificadores de los tipos de aplicacion */
     public static final Integer ID_APLICACION_BACKOFFICE = 1;
     public static final Integer ID_APLICACION_VENTAS = 2;
