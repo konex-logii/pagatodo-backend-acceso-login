@@ -9,15 +9,13 @@ import org.springframework.http.ResponseEntity;
 import com.acceso.login.constants.Numero;
 import com.acceso.login.dto.MensajeRespuestaDTO;
 
-import lombok.experimental.UtilityClass;
-
 /**
  * Clase que contiene los metodo utilitarios del sistema
  *
  */
-@UtilityClass
-public class Util {
 
+public final class Util {
+	private Util() {}
 	/**
 	 * Metodo que permite validar si un valor es null o vacio
 	 */
@@ -31,13 +29,6 @@ public class Util {
 	 */
 	public static ResponseEntity<Object> getResponseSuccessful(Object body) {
 		return ResponseEntity.status(HttpStatus.OK).body(body);
-	}
-
-	/**
-	 * Metodo que permite construir el response de respuesta OK
-	 */
-	public static ResponseEntity<Object> getResponseOk() {
-		return ResponseEntity.status(HttpStatus.OK).body(new MensajeRespuestaDTO(HttpStatus.OK.getReasonPhrase()));
 	}
 
 	/**

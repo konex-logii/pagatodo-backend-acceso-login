@@ -214,6 +214,7 @@ public class AccesoLoginService {
 		}
 		return null;
 	}
+	@SuppressWarnings("null")
 	private boolean validarClave(AutenticacionSolicitudDTO credenciales, String codificado) throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException, IOException {
 
 		ResponseEntity<?> response;
@@ -357,6 +358,7 @@ public class AccesoLoginService {
 		}
 		return Collections.emptyList();
 	}
+	@SuppressWarnings("null")
 	private boolean validacionPuntoVentaZonaSubZonaActiva(Long idZona,Long idPuntoVenta, Long idUsuario) throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException, IOException, ExcepcionComercial  {
 
 		ResponseEntity<?> response;

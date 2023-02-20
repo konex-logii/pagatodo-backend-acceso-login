@@ -1,6 +1,9 @@
 package com.acceso.login.dto;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -34,6 +37,15 @@ class DTOTest {
 	        assertNotNull(menuItem.getAcciones());
 	        assertEquals(1, menuItem.getAcciones().size());
 	        assertEquals(accion, menuItem.getAcciones().get(0));
+	    }
+	    @Test
+	    void testSelectItem() {
+	    	SelectItem menuItem = new SelectItem();
+	    	menuItem.setLabel("datos");
+	    	menuItem.setOtherLabel("datos");
+	    	assertNotNull(menuItem.getLabel());
+	    	assertNotNull(menuItem.getOtherLabel());
+
 	    }
 
 	    @Test
@@ -140,5 +152,19 @@ class DTOTest {
 	         assertEquals("VEND-001", usuario.getCodigo());
 	         assertEquals(true, usuario.isRolConProgramacion());
 	    }
+	    
+	    @Test
+		void testAccesores() {
+			String mensajeDefinido = "Mensaje generico";
+			MensajeRespuestaDTO mensaje = new MensajeRespuestaDTO();
+			assertNull(mensaje.getMensaje());
+
+			mensaje.setMensaje(mensajeDefinido);
+			assertAll("valores MensajeRespuestaDto",
+				() -> assertNotNull(mensaje.getMensaje()),
+				() -> assertEquals(mensajeDefinido, mensaje.getMensaje())
+			);
+		}
+
 
 }

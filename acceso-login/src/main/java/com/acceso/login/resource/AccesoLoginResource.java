@@ -28,7 +28,10 @@ public class AccesoLoginResource {
 	/** Service para que contiene los procesos de negocio para la autenticacion */
 	@Autowired
 	private AccesoLoginService accesoLoginService;
-	
+
+	public AccesoLoginResource(AccesoLoginService accesoLoginService) {
+		this.accesoLoginService = accesoLoginService;
+	}
 
 
 	/**
@@ -56,7 +59,7 @@ public class AccesoLoginResource {
 			return Util.getResponseBadRequest(e.getMessage());
 		} catch (Exception e	) {
 			logMensaje = "ERROR  " + logMensaje + " MENSAJE: " +e.getMessage();
-            log.info(logMensaje);
+            log.error(logMensaje);
 			return Util.getResponseError(AccesoLoginResource.class.getSimpleName() + ".iniciarSesion ", e.getMessage());
 		}
 	}

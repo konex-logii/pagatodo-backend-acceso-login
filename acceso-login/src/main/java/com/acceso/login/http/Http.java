@@ -38,39 +38,53 @@ import org.springframework.web.client.RestTemplate;
 
 @Component
 public class Http implements ClienteHttpService {
-
-
-	private final Logger log = LoggerFactory.getLogger(Http.class);
-
+	public Http() {
+        template = construirRestTemplate(1);
+	}
 	
+	public Http(RestTemplate restTemplate) {
+		template = restTemplate;
+	}
+	
+	private final Logger log = LoggerFactory.getLogger(Http.class);
+	private RestTemplate template;
+	private boolean activeSSL = true;
+
+	private RestTemplate construirRestTemplate(Integer timeoutHttp) {
+        RestTemplateBuilder builder = new RestTemplateBuilder();
+		return builder
+            .setReadTimeout( Duration.ofMinutes( timeoutHttp ) )
+            .setConnectTimeout( Duration.ofMinutes( timeoutHttp ) )
+            .build();
+	}
 
     @Override
-    public ResponseEntity<?> get( URI uri, Class<?> object, MediaType mediaType ) 
+    public <T>ResponseEntity<T> get( URI uri, Class<T> object, MediaType mediaType ) 
     	throws IOException , KeyManagementException, NoSuchAlgorithmException, KeyStoreException  {
         return execute( uri, HttpMethod.GET, null, object, mediaType,  true );
     }
 
     @Override
-    public ResponseEntity<?> delete( URI uri, Class<?> object, MediaType mediaType)
+    public <T>ResponseEntity<T> delete( URI uri, Class<T> object, MediaType mediaType)
     		throws IOException , KeyManagementException, NoSuchAlgorithmException, KeyStoreException  {
         return execute( uri, HttpMethod.DELETE, null, object, mediaType,  true );
     }
 
     @Override
-    public ResponseEntity<?> post( URI uri, Object data, Class<?> objectClass, MediaType mediaType )
+    public <T>ResponseEntity<T> post( URI uri, Object data, Class<T> objectClass, MediaType mediaType )
     		throws IOException , KeyManagementException, NoSuchAlgorithmException, KeyStoreException  {
         return execute( uri, HttpMethod.POST, data, objectClass, mediaType,  true );
     }
 
     @Override
-    public ResponseEntity<?> put( URI uri, Object data, Class<?> objectClass, MediaType mediaType )
+    public <T>ResponseEntity<T> put( URI uri, Object data, Class<T> objectClass, MediaType mediaType )
     		throws IOException , KeyManagementException, NoSuchAlgorithmException, KeyStoreException  {
         return execute( uri, HttpMethod.PUT, data, objectClass, mediaType, true );
     }
 
  
 
-    private ResponseEntity<?> execute( URI uri, HttpMethod httpMethod, Object requestParam, Class<?> objectClass, MediaType mediaType,  Boolean activeSSL )
+    private <T>ResponseEntity<T> execute( URI uri, HttpMethod httpMethod, Object requestParam, Class<T> objectClass, MediaType mediaType,  Boolean activeSSL )
     	throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException {
 
         HttpHeaders headers = new HttpHeaders();
@@ -81,7 +95,7 @@ public class Http implements ClienteHttpService {
             headers.setContentType( mediaType );
         }
 
-        HttpEntity<?> request;
+        HttpEntity<Object> request;
 
         if( requestParam == null ) {
             request = new HttpEntity<>( headers );
@@ -90,7 +104,7 @@ public class Http implements ClienteHttpService {
             request = new HttpEntity<>( requestParam, headers );
         }
 
-        ResponseEntity<?> response;
+        ResponseEntity<T> response;
 
         Long initTime;
         Long endTime;
@@ -98,22 +112,12 @@ public class Http implements ClienteHttpService {
 
         initTime = System.currentTimeMillis();
 
-        RestTemplate restTemplate;
-
-        RestTemplateBuilder builder = new RestTemplateBuilder();
-
-        Integer timeoutHttp = 1;
-
-        restTemplate = builder
-            .setReadTimeout( Duration.ofMinutes( timeoutHttp ) )
-            .setConnectTimeout( Duration.ofMinutes( timeoutHttp ) )
-            .build();
-
+       
         if( Boolean.FALSE.equals(activeSSL) ) {
-            restTemplate.setRequestFactory( this.requestFactory() );
+            template.setRequestFactory( this.requestFactory() );
         }
 
-        response = restTemplate.exchange( uri, httpMethod, request, objectClass );
+        response = template.exchange( uri, httpMethod, request, objectClass );
 
         endTime = System.currentTimeMillis();
 
@@ -144,6 +148,17 @@ public class Http implements ClienteHttpService {
         requestFactory.setHttpClient( httpClient );
 
         return requestFactory;
+    }
+    public void activarSSL() {
+    	activeSSL = true;
+    }
+    
+    public void desactivarSSL() {
+    	activeSSL = false;
+    }
+    
+    public boolean getSSL() {
+    	return activeSSL;
     }
 
 }

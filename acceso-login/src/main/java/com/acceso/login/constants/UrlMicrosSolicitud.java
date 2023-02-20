@@ -1,13 +1,12 @@
 package com.acceso.login.constants;
 
-import lombok.experimental.UtilityClass;
-
 /**
  * DTO para encapsular los datos que se envia desde el cliente
  * (angular, app movil) al momento de la autenticacion del sistema
  */
-@UtilityClass
-public class UrlMicrosSolicitud {
+
+public final class UrlMicrosSolicitud {
+	private UrlMicrosSolicitud() {}
     /** Es la clave de ingreso al sistema */
     public static final String ACCESO_USUARIOS = "http://logii-test-alb-696494596.us-east-1.elb.amazonaws.com:8200/acceso-usuarios/";
     public static final String ACCESO_ROLES = "http://logii-test-alb-696494596.us-east-1.elb.amazonaws.com:8199/accesoRoles/";
